@@ -1,0 +1,8 @@
+"id";"title";"salary";"department_id"
+1;"Sales Lead";100000.0;1
+2;"Salesperson";80000.0;1
+3;"Lead Engineer";150000.0;2
+4;"Software Engineer";120000.0;2
+5;"Accountant";125000.0;3
+6;"Legal Team Lead";250000.0;4
+7;"Lawyer";190000.0;4
