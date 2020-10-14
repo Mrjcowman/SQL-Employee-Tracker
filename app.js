@@ -163,8 +163,56 @@ function addRole(){
 
 // TODO: implement employee addition
 function addEmployee(){
-    
-    queryInput();
+    console.log();
+    console.log("Adding Employee!");
+
+    // TODO: query for departments list
+    const roles = [{value: 1, name: "Test Role 1"}, {value: 2, name: "Test Role 2"}]
+    const managers = [{value: 1, name: "John Doe"}, {value: 2, name: "Jane Deere"}, "none"];
+
+    inquirer.prompt([
+        {
+            name: "firstName",
+            message: "What is the first name of this Employee?",
+            type: "input",
+            validate: answer => {
+                // Make sure the user passes a word
+                return /\w+/.test(answer)? true: "Please input a name";
+            } 
+        },
+        {
+            name: "lastName",
+            message: "What is the last name of this Employee?",
+            type: "input",
+            validate: answer => {
+                // Make sure the user passes a word
+                return /\w+/.test(answer)? true: "Please input a name";
+            } 
+        },
+        {
+            name: "roleID",
+            message: "What is the Role of this Employee?",
+            type: "list",
+            choices: roles
+        },
+        {
+            name: "managerID",
+            message: "Who is the Manager of this Employee?",
+            type: "list",
+            choices: managers
+        }
+    ]).then(answers=>{
+        const {firstName, lastName, roleID, managerID} = answers;
+        if(managerID=="none"){
+            console.log(`Adding an employee named ${firstName} ${lastName} with a role of ${roleID}`);
+        }else{
+            console.log(`Adding an employee named ${firstName} ${lastName} with a role of ${roleID} managed by ${managerID}`);
+        }
+        
+        // TODO: implement employee addition queries
+
+        queryInput();
+    });
 }
 
 // VIEW FUNCTIONS
