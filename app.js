@@ -235,7 +235,7 @@ function commandView(typeToView){
     }
 }
 
-// TODO: implement view functions
+
 function viewDepartments(){
     connection.query("SELECT * FROM department", (err, data)=>{
         if(err) throw err;
@@ -254,9 +254,25 @@ function viewRoles(){
     });
 }
 
+// TODO: implement filtered employee view functions
 function viewEmployees(){
-    console.log("I viewed some Employees!");
-    queryInput();
+    connection.query(`SELECT emp.id, emp.first_name, emp.last_name, 
+                            title, salary, name AS department_name,
+                            CASE
+                                WHEN emp.manager_id IS NULL THEN "-/-"
+                                ELSE CONCAT(mgr.first_name," ",mgr.last_name)
+                            END AS manager
+                        FROM employee AS emp
+                        LEFT JOIN employee AS mgr ON emp.manager_id=mgr.id
+                        JOIN role JOIN department
+                        WHERE emp.role_id=role.id AND role.department_id=department.id;`,
+        (err, data)=>{
+            if(err) throw err;
+
+            console.table(data);
+            queryInput();
+        }
+    );
 }
 
 
