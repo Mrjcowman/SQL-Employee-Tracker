@@ -265,7 +265,8 @@ function viewEmployees(){
                         FROM employee AS emp
                         LEFT JOIN employee AS mgr ON emp.manager_id=mgr.id
                         JOIN role JOIN department
-                        WHERE emp.role_id=role.id AND role.department_id=department.id;`,
+                        WHERE emp.role_id=role.id AND role.department_id=department.id
+                        ORDER BY emp.last_name`,
         (err, data)=>{
             if(err) throw err;
 
@@ -294,14 +295,61 @@ function commandEdit(typeToEdit){
     }
 }
 
-// TODO: implement edit functions
-
 function editEmployeeRole(){
-    console.log("I edited an employee's role!");
-    queryInput();
+    connection.query("SELECT id, title FROM role", (err, data)=>{
+        if(err) throw err;
+
+        const roles = [];
+
+        for(i in data)
+        {
+            const role = data[i];
+            roles.push({value: role.id, name: role.title});
+        }
+
+        connection.query("SELECT id, first_name, last_name FROM employee", (err, data)=>{
+            if(err) throw err;
+
+            const employees = [];
+
+
+            for(i in data){
+                const employee = data[i];
+                
+
+                employees.push({value: employee.id,
+                                name: employee.first_name+" "+employee.last_name});
+            }
+
+            inquirer.prompt([
+                {
+                    name: "employee",
+                    message: "Which Employee do you want to assign a new Role?",
+                    type: "list",
+                    choices: employees,
+                },
+                {
+                    name: "role",
+                    message: "Which Role does this Employee fill?",
+                    type: "list",
+                    choices: roles
+                }
+            ]).then(answers=>{
+                connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [answers.role, answers.employee],(err, data)=>{
+                    if(err) throw err;
+
+                    console.log("Employee updated!");
+
+                    queryInput();
+                })
+            })
+        })
+    })
 }
 
+// TODO: implement manager editing
+
 function editEmployeeManager(){
-    console.log("I edited an employee's manager!");
+    console.log("Feature to be implemented at a later time!");
     queryInput();
 }
