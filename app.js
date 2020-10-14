@@ -120,11 +120,13 @@ function addDepartment(){
             } 
         }
     ]).then(answers=>{
-        console.log("Adding a department named "+answers.deptName);
         
-        // TODO: implement department addition query
+        connection.query("INSERT INTO department (name) VALUES (?)", answers.deptName, (err, data)=>{
+            if(err) throw err;
 
-        queryInput();
+            console.log("Department added!");
+            queryInput();
+        })
     });
 }
 
