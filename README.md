@@ -11,6 +11,9 @@ A CLI CMS for managing a company's employees using node and MySQL
 4. [Questions](#questions)
 
 ## Installation Instructions
+Build a database using schema.sql, and populate it with the provided csv values if you wish.
+
+Then run
 ```
 npm install
 ```
