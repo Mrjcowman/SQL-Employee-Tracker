@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
+const cTable = require("console.table");
 
 const ERR_INVALID_ANSWER = 0xf0;
 
@@ -14,14 +15,15 @@ const connection = mysql.createConnection({
     database: "employee_tracker_db"
 });
 
+
+// MAIN LOOP
+// ================================================================
 connection.connect((err)=>{
     if(err) throw err;
 
     console.log("MySQL Connected with id: "+connection.threadId);
+    queryInput();
 });
-
-// MAIN LOOP
-// ================================================================
 
 function queryInput(){
     console.log();
@@ -73,9 +75,6 @@ function queryInput(){
         }
     })
 }
-
-// Start the queries
-queryInput();
 
 // FUNCTIONS
 // ================================================================
@@ -238,8 +237,12 @@ function commandView(typeToView){
 
 // TODO: implement view functions
 function viewDepartments(){
-    console.log("I viewed some Departments!");
-    queryInput();
+    connection.query("SELECT * FROM department", (err, data)=>{
+        if(err) throw err;
+
+        console.table(data);
+        queryInput();
+    });
 }
 
 function viewRoles(){
