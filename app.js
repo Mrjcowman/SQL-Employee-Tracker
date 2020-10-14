@@ -129,10 +129,36 @@ function addDepartment(){
     });
 }
 
-// TODO: implement role addition
 function addRole(){
-    
-    queryInput();
+    console.log();
+    console.log("Adding Role!");
+
+    // TODO: query for departments list
+    const departments = [{value: 1, name:"Test Department 1"}, {value: 2, name:"Test Department 2"}]
+
+    inquirer.prompt([
+        {
+            name: "roleName",
+            message: "What is the name of this Role?",
+            type: "input",
+            validate: answer => {
+                // Make sure the user passes a word
+                return /\w+/.test(answer)? true: "Please input a word";
+            } 
+        },
+        {
+            name: "deptID",
+            message: "Which Department does this role fall under?",
+            type: "list",
+            choices: departments
+        }
+    ]).then(answers=>{
+        console.log("Adding a role named "+answers.roleName+" in the department "+answers.deptID);
+        
+        // TODO: implement role addition query
+
+        queryInput();
+    });
 }
 
 // TODO: implement employee addition
