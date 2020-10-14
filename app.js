@@ -1,6 +1,8 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 
+const ERR_INVALID_ANSWER = 0xf0;
+
 // INITIALIZE
 // ================================================================
 
@@ -65,6 +67,9 @@ function queryInput(){
             case "Add...": commandAdd(answers); break;
             case "View...": commandView(answers); break;
             case "Edit...": commandEdit(answers); break;
+            default:
+                console.error("Something weird happened!");
+                exitProgram(ERR_INVALID_ANSWER);
         }
     })
 }
@@ -98,7 +103,7 @@ function commandAdd(answers){
 
         default: 
             console.error("Something weird happened!");
-            return;
+            exitProgram(ERR_INVALID_ANSWER);
     }
 }
 
