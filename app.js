@@ -191,53 +191,83 @@ function addEmployee(){
     console.log();
     console.log("Adding Employee!");
 
-    // TODO: query for departments list
-    const roles = [{value: 1, name: "Test Role 1"}, {value: 2, name: "Test Role 2"}]
-    const managers = [{value: 1, name: "John Doe"}, {value: 2, name: "Jane Deere"}, "none"];
-
-    inquirer.prompt([
-        {
-            name: "firstName",
-            message: "What is the first name of this Employee?",
-            type: "input",
-            validate: answer => {
-                // Make sure the user passes a word
-                return /\w+/.test(answer)? true: "Please input a name";
-            } 
-        },
-        {
-            name: "lastName",
-            message: "What is the last name of this Employee?",
-            type: "input",
-            validate: answer => {
-                // Make sure the user passes a word
-                return /\w+/.test(answer)? true: "Please input a name";
-            } 
-        },
-        {
-            name: "roleID",
-            message: "What is the Role of this Employee?",
-            type: "list",
-            choices: roles
-        },
-        {
-            name: "managerID",
-            message: "Who is the Manager of this Employee?",
-            type: "list",
-            choices: managers
-        }
-    ]).then(answers=>{
-        const {firstName, lastName, roleID, managerID} = answers;
-        if(managerID=="none"){
-            console.log(`Adding an employee named ${firstName} ${lastName} with a role of ${roleID}`);
-        }else{
-            console.log(`Adding an employee named ${firstName} ${lastName} with a role of ${roleID} managed by ${managerID}`);
-        }
+    // Get roles to generate list
+    connection.query("SELECT id, title FROM role", (err, data)=>{
+        if(err) throw err;
         
-        // TODO: implement employee addition queries
+        // Generate array of choices for inquirer
+        const roles = [];
+        for(i in data){
+            const role = data[i];
+            roles.push({value: role.id, name: role.title});
+        }
 
-        queryInput();
-    });
+        // Get employees to generate manager list
+        connection.query("SELECT id, first_name, last_name FROM employee", (err, data)=>{
+            if(err) throw err;
+            
+            // Generate array of choices for inquirer
+            const managers = [];
+            for(i in data){
+                const manager = data[i];
+                managers.push({value: manager.id, name: manager.first_name+" "+manager.last_name});
+            }
+
+            managers.unshift({value: "none", name: " -- NONE --"});
+            
+            inquirer.prompt([
+                {
+                    name: "firstName",
+                    message: "What is the first name of this Employee?",
+                    type: "input",
+                    validate: answer => {
+                        // Make sure the user passes a word
+                        return /\w+/.test(answer)? true: "Please input a name";
+                    } 
+                },
+                {
+                    name: "lastName",
+                    message: "What is the last name of this Employee?",
+                    type: "input",
+                    validate: answer => {
+                        // Make sure the user passes a word
+                        return /\w+/.test(answer)? true: "Please input a name";
+                    } 
+                },
+                {
+                    name: "roleID",
+                    message: "What is the Role of this Employee?",
+                    type: "list",
+                    choices: roles
+                },
+                {
+                    name: "managerID",
+                    message: "Who is the Manager of this Employee?",
+                    type: "list",
+                    choices: managers
+                }
+            ]).then(answers=>{
+                const {firstName, lastName, roleID, managerID} = answers;
+
+                let query = "";
+                if(managerID=="none"){
+                    query = "INSERT INTO employee (first_name, last_name, role_id) VALUES (?,?,?)";
+                }else{
+                    query = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)"
+                }
+                
+                connection.query(query, [firstName, lastName, roleID, managerID], (err, data)=>{
+                    if(err) throw err;
+
+                    console.log("Employee added!");
+
+                    queryInput();
+                })
+            });
+            
+        })
+    })
+
 }
 
 // VIEW FUNCTIONS
