@@ -44,7 +44,7 @@ function queryInput(){
             name: "view",
             message: "What would you like to view?",
             type: "list",
-            choices: ["Departments", "Roles", "Employees", "Nevermind..."],
+            choices: ["Departments", "Roles", "Employees...", "Nevermind..."],
             when: answers => answers.command=="View..."
         },
         {
@@ -64,9 +64,9 @@ function queryInput(){
         }
 
         switch(answers.command){
-            case "Add...": commandAdd(answers); break;
-            case "View...": commandView(answers); break;
-            case "Edit...": commandEdit(answers); break;
+            case "Add...": commandAdd(answers.add); break;
+            case "View...": commandView(answers.view); break;
+            case "Edit...": commandEdit(answers.edit); break;
             default:
                 console.error("Something weird happened!");
                 exitProgram(ERR_INVALID_ANSWER);
@@ -87,8 +87,8 @@ function exitProgram(exitCode) {
 
 // ADD FUNCTIONS
 
-function commandAdd(answers){
-    switch(answers.add){
+function commandAdd(typeToAdd){
+    switch(typeToAdd){
         case "Department":
             addDepartment();
             break;
@@ -161,7 +161,6 @@ function addRole(){
     });
 }
 
-// TODO: implement employee addition
 function addEmployee(){
     console.log();
     console.log("Adding Employee!");
@@ -217,15 +216,69 @@ function addEmployee(){
 
 // VIEW FUNCTIONS
 
-function commandView(answers){
-    console.log("I viewed something here!");
+function commandView(typeToView){
+    switch(typeToView){
+        case "Departments":
+            viewDepartments();
+            break;
+
+        case "Roles":
+            viewRoles();
+            break;
+
+        case "Employees...":
+            viewEmployees();
+            break;
+
+        default: 
+            console.error("Something weird happened!");
+            exitProgram(ERR_INVALID_ANSWER);
+    }
+}
+
+// TODO: implement view functions
+function viewDepartments(){
+    console.log("I viewed some Departments!");
+    queryInput();
+}
+
+function viewRoles(){
+    console.log("I viewed some Roles!");
+    queryInput();
+}
+
+function viewEmployees(){
+    console.log("I viewed some Employees!");
     queryInput();
 }
 
 
 // EDIT FUNCTIONS
 
-function commandEdit(answers){
-    console.log("I edited something here!");
+function commandEdit(typeToEdit){
+    switch(typeToEdit){
+        case "Employee Role":
+            editEmployeeRole();
+            break;
+
+        case "Employee Manager":
+            editEmployeeManager();
+            break;
+
+        default: 
+            console.error("Something weird happened!");
+            exitProgram(ERR_INVALID_ANSWER);
+    }
+}
+
+// TODO: implement edit functions
+
+function editEmployeeRole(){
+    console.log("I edited an employee's role!");
+    queryInput();
+}
+
+function editEmployeeManager(){
+    console.log("I edited an employee's manager!");
     queryInput();
 }
