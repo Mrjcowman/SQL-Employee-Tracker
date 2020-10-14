@@ -132,32 +132,57 @@ function addRole(){
     console.log();
     console.log("Adding Role!");
 
-    // TODO: query for departments list
-    const departments = [{value: 1, name:"Test Department 1"}, {value: 2, name:"Test Department 2"}]
-
-    inquirer.prompt([
-        {
-            name: "roleName",
-            message: "What is the name of this Role?",
-            type: "input",
-            validate: answer => {
-                // Make sure the user passes a word
-                return /\w+/.test(answer)? true: "Please input a word";
-            } 
-        },
-        {
-            name: "deptID",
-            message: "Which Department does this role fall under?",
-            type: "list",
-            choices: departments
-        }
-    ]).then(answers=>{
-        console.log("Adding a role named "+answers.roleName+" in the department "+answers.deptID);
+    // Get departments to generate list
+    connection.query("SELECT * FROM department", (err, data)=>{
+        if(err) throw err;
         
-        // TODO: implement role addition query
+        // Generate array of choices for inquirer
+        const departments = [];
+        for (i in data) {
+            const department = data[i];
+            departments.push({value: department.id, name: department.name});
+        }
+        
+        inquirer.prompt([
+            {
+                name: "roleName",
+                message: "What is the name of this Role?",
+                type: "input",
+                validate: answer => {
+                    // Make sure the user passes a word
+                    return /\w+/.test(answer)? true: "Please input a word";
+                } 
+            },
+            {
+                name: "salary",
+                message: "What is the salary of this Role?",
+                type: "input",
+                validate: answer => {
+                    // Make sure the user passes a number
+                    return /\d+/.test(answer)? true: "Please input a number";
+                } 
+            },
+            {
+                name: "deptID",
+                message: "Which Department does this role fall under?",
+                type: "list",
+                choices: departments
+            }
+        ]).then(answers=>{
 
-        queryInput();
-    });
+            const salary = parseFloat(answers.salary);
+            
+            connection.query("INSERT INTO role (title, salary, department_id) VALUES (?,?,?)",
+                [answers.roleName, salary, answers.deptID], (err, data)=>{
+                    if(err) throw err;
+
+                    console.log("Role added!");
+                    queryInput();
+                })
+        });
+
+    })
+
 }
 
 function addEmployee(){
@@ -296,23 +321,24 @@ function commandEdit(typeToEdit){
 }
 
 function editEmployeeRole(){
+    // Get roles to populate list
     connection.query("SELECT id, title FROM role", (err, data)=>{
         if(err) throw err;
 
+        // Build array of choices for inquirer
         const roles = [];
-
         for(i in data)
         {
             const role = data[i];
             roles.push({value: role.id, name: role.title});
         }
 
+        // Get employees to populate list
         connection.query("SELECT id, first_name, last_name FROM employee", (err, data)=>{
             if(err) throw err;
 
+            // Build array of choices for inquirer
             const employees = [];
-
-
             for(i in data){
                 const employee = data[i];
                 
