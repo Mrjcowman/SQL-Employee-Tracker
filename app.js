@@ -61,8 +61,11 @@ function queryInput(){
             return;
         }
 
-        console.log("I did something here!");
-        queryInput();
+        switch(answers.command){
+            case "Add...": commandAdd(answers); break;
+            case "View...": commandView(answers); break;
+            case "Edit...": commandEdit(answers); break;
+        }
     })
 }
 
@@ -75,4 +78,75 @@ function exitProgram(exitCode) {
     connection.end();
     console.log("Goodbye!\n");
     process.exit(exitCode);
+}
+
+// ADD FUNCTIONS
+
+function commandAdd(answers){
+    switch(answers.add){
+        case "Department":
+            addDepartment();
+            break;
+
+        case "Role":
+            addRole();
+            break;
+
+        case "Employee":
+            addEmployee();
+            break;
+
+        default: 
+            console.error("Something weird happened!");
+            return;
+    }
+}
+
+function addDepartment(){
+    console.log();
+    console.log("Adding Department!");
+    inquirer.prompt([
+        {
+            name: "deptName",
+            message: "What is the name of this Department?",
+            type: "input",
+            validate: answer => {
+                // Make sure the user passes a word
+                return /\w+/.test(answer)? true: "Please input a word";
+            } 
+        }
+    ]).then(answers=>{
+        console.log("Adding a department named "+answers.deptName);
+        
+        // TODO: implement department addition query
+
+        queryInput();
+    });
+}
+
+// TODO: implement role addition
+function addRole(){
+    
+    queryInput();
+}
+
+// TODO: implement employee addition
+function addEmployee(){
+    
+    queryInput();
+}
+
+// VIEW FUNCTIONS
+
+function commandView(answers){
+    console.log("I viewed something here!");
+    queryInput();
+}
+
+
+// EDIT FUNCTIONS
+
+function commandEdit(answers){
+    console.log("I edited something here!");
+    queryInput();
 }
