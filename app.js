@@ -246,8 +246,12 @@ function viewDepartments(){
 }
 
 function viewRoles(){
-    console.log("I viewed some Roles!");
-    queryInput();
+    connection.query("SELECT role.id, title, salary, name AS department FROM role JOIN department WHERE department_id=department.id", (err, data)=>{
+        if(err) throw err;
+
+        console.table(data);
+        queryInput();
+    });
 }
 
 function viewEmployees(){
